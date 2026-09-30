@@ -1,6 +1,6 @@
 // ===== 배포 후 아래 값들만 채워 넣으면 됩니다 (site/README.md 참고) =====
-const GAS_ENDPOINT = "https://script.google.com/macros/s/REPLACE_WITH_DEPLOYMENT_ID/exec";
-const KAKAO_CHANNEL_URL = "https://pf.kakao.com/_REPLACE_WITH_CHANNEL_ID";
+const GAS_ENDPOINT = "https://script.google.com/macros/s/AKfycbxx4pmOQ0eoutB26EuE9s2KhMGu-pWR_TdrD4zNU2ney8WmftA2zpq36aQoMovJMcit/exec";
+const KAKAO_CHANNEL_URL = "https://pf.kakao.com/_ZFSrX";
 const RENTAL_CATALOG_URL = ""; // 가전렌탈 제품 카탈로그 URL — 아직 미정, 정해지면 채워넣기
 // ======================================================================
 
