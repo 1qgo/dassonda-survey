@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>다쏜다 통신 상담 진단 설문</title>
+<meta name="description" content="복잡한 통신 조건을 숨김없이 같은 기준으로 비교해 드립니다. 몇 가지 질문에 답하시면 맞춤 상담안을 바로 안내드립니다." />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="eyebrow">DASSONDA · 지역 휴대폰 상담소</div>
+    <h1>복잡한 통신 조건, 같은 기준으로<br />숨김없이 비교해 드립니다</h1>
+    <p>질문에 답하시면 상담사가 먼저 연락드립니다.</p>
+  </header>
+
+  <!-- ===== 위저드(질문 1개 = 화면 1개) ===== -->
+  <div id="wizard">
+    <div class="wizard-nav">
+      <button type="button" id="backBtn" class="back-btn" style="display:none;">← 이전</button>
+      <span id="progress" class="progress"></span>
+    </div>
+    <div id="screenBody" class="screen-body"></div>
+  </div>
+
+  <!-- ===== 결과 화면 ===== -->
+  <div class="state" id="resultState"></div>
+
+  <!-- ===== 제출 실패 화면 ===== -->
+  <div class="state" id="failState">
+    <h2>제출에 실패했습니다</h2>
+    <p>네트워크 오류일 수 있어요. 다시 시도하시거나 아래 카카오 채널로 바로 문의해 주세요.</p>
+    <div class="kakao-actions">
+      <a class="btn-kakao" id="kakaoChatBtnFail" href="#" target="_blank" rel="noopener">💬 카카오톡 1:1 상담하기</a>
+      <button class="btn-secondary" id="retryBtn" type="button">폼으로 돌아가기</button>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <a href="privacy.html">개인정보처리방침</a>
+  </footer>
+
+</div>
+
+<script src="questions.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
