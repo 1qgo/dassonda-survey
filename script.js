@@ -234,7 +234,7 @@ async function submitAnswers() {
     track: answers.product_line === "휴대폰" ? "A.휴대폰"
       : answers.product_line === "인터넷/TV" ? "I.인터넷·TV"
       : ({ 알뜰폰등: "B.알뜰폰 등", 가전렌탈: "R.가전렌탈", 자동차렌트리스: "V.자동차렌트리스",
-          이사청소: "M.이사청소", 상조: "S.상조" }[answers.other_line_need] || "X.기타"),
+          이사청소: "M.이사청소", 상조: "S.상조", 보험: "N.보험" }[answers.other_line_need] || "X.기타"),
     urgent: answers.funeral_urgent === "예",
     answers,
   };

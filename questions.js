@@ -9,7 +9,7 @@ const QUESTIONS = [
     options: [
       { value: "휴대폰", label: "휴대폰" },
       { value: "인터넷/TV", label: "인터넷/TV" },
-      { value: "기타", label: "기타 (알뜰폰·가전렌탈·자동차·이사청소·상조)" },
+      { value: "기타", label: "기타 (알뜰폰·가전렌탈·자동차·이사청소·상조·보험)" },
     ],
     field: "product_line",
     next: (a) => (a.product_line === "휴대폰" ? "A1" : a.product_line === "인터넷/TV" ? "I1" : "X0"),
@@ -250,10 +250,11 @@ const QUESTIONS = [
       { value: "자동차렌트리스", label: "자동차 렌트·리스" },
       { value: "이사청소", label: "이사·청소" },
       { value: "상조", label: "상조" },
+      { value: "보험", label: "보험" },
     ],
     field: "other_line_need",
     next: (a) => ({
-      알뜰폰등: "B1", 가전렌탈: "R1", 자동차렌트리스: "V1", 이사청소: "M1", 상조: "S1",
+      알뜰폰등: "B1", 가전렌탈: "R1", 자동차렌트리스: "V1", 이사청소: "M1", 상조: "S1", 보험: "N1",
     }[a.other_line_need]),
   },
 
@@ -401,6 +402,32 @@ const QUESTIONS = [
       { value: "아니오", label: "아니요, 여유 있게 상담받고 싶어요" },
     ],
     field: "funeral_urgent",
+    next: () => "AZ",
+  },
+
+  // ---- TRACK N: 보험 ----
+  {
+    id: "N1", track: "N.보험", type: "single",
+    text: "어떤 보험을 알아보세요?",
+    options: [
+      { value: "실손건강", label: "실손·건강보험" },
+      { value: "암질병", label: "암·질병 보장" },
+      { value: "자동차운전자", label: "자동차·운전자보험" },
+      { value: "어린이태아", label: "어린이·태아보험" },
+      { value: "모름", label: "잘 모름 - 상담받고 정하고 싶음" },
+    ],
+    field: "insurance_type",
+    next: () => "N2",
+  },
+  {
+    id: "N2", track: "N.보험", type: "single",
+    text: "어떤 상담이 필요하세요?",
+    options: [
+      { value: "신규검토", label: "새로 가입 검토" },
+      { value: "기존점검", label: "지금 가입한 보험 점검 (중복·과다 확인)" },
+      { value: "청구문의", label: "보험금 청구 문의" },
+    ],
+    field: "insurance_purpose",
     next: () => "AZ",
   },
 ];
