@@ -416,6 +416,12 @@ function buildResultContent() {
   kakaoWrap.appendChild(addBtn);
   wrap.appendChild(kakaoWrap);
 
+  // 카톡 채널명(다쏜다 광명사거리역점)이 고원규통신과 달라 보여 놀라지 않도록 미리 안내
+  const kakaoNote = document.createElement("p");
+  kakaoNote.className = "kakao-note";
+  kakaoNote.textContent = "카카오톡에서는 ‘다쏜다 광명사거리역점’으로 보여요. 고원규통신의 실제 매장 이름입니다.";
+  wrap.appendChild(kakaoNote);
+
   return wrap;
 }
 
