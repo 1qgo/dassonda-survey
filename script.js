@@ -404,13 +404,15 @@ function buildResultContent() {
   chatBtn.className = "btn-kakao";
   chatBtn.href = KAKAO_CHAT_URL;
   chatBtn.target = "_blank";
-  chatBtn.rel = "noopener";
+  chatBtn.rel = "noopener noreferrer"; // 이전 페이지 주소를 카톡으로 넘기지 않는다
+  chatBtn.referrerPolicy = "no-referrer";
   chatBtn.textContent = "카카오톡 1:1 상담하기";
   const addBtn = document.createElement("a");
   addBtn.className = "btn-secondary";
   addBtn.href = KAKAO_ADD_URL;
   addBtn.target = "_blank";
-  addBtn.rel = "noopener";
+  addBtn.rel = "noopener noreferrer";
+  addBtn.referrerPolicy = "no-referrer";
   addBtn.textContent = "카카오톡 채널 추가하기";
   kakaoWrap.appendChild(chatBtn);
   kakaoWrap.appendChild(addBtn);
@@ -419,7 +421,7 @@ function buildResultContent() {
   // 카톡 채널명(다쏜다 광명사거리역점)이 고원규통신과 달라 보여 놀라지 않도록 미리 안내
   const kakaoNote = document.createElement("p");
   kakaoNote.className = "kakao-note";
-  kakaoNote.textContent = "카카오톡에서는 ‘다쏜다 광명사거리역점’으로 보여요. 고원규통신의 실제 매장 이름입니다.";
+  kakaoNote.innerHTML = '카카오톡에서는 <br /><b>‘다쏜다 광명사거리역점’</b>으로 보여요.<br />고원규통신의 실제 매장 이름입니다.';
   wrap.appendChild(kakaoNote);
 
   return wrap;

@@ -224,4 +224,9 @@ body { word-break: keep-all; overflow-wrap: anywhere; }
 .consent-box .consent-all { font-weight: 800; padding-bottom: 10px; margin-bottom: 4px; border-bottom: 1px solid var(--line-2); }
 
 /* 카톡 채널명 안내 */
-.state p.kakao-note { margin: 12px 0 0; font-size: 13px; line-height: 1.5; color: var(--muted); }
+.state p.kakao-note {
+  margin: 14px 0 0; padding: 14px 16px; border-radius: 12px;
+  background: var(--brand-soft); border: 1px solid #ffd3c2;
+  font-size: 15px; line-height: 1.55; color: var(--ink); font-weight: 600;
+}
+.state p.kakao-note b { color: var(--brand); font-weight: 800; }
