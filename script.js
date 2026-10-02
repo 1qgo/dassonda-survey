@@ -32,6 +32,7 @@ function findQuestion(id) {
 
 function goNext(question, value) {
   answers[question.field] = value;
+  document.body.classList.add("started"); // 첫 답 이후엔 상단 문구를 줄인다
   const nextId = question.next(answers);
   history.push(currentId);
   currentId = nextId;
@@ -49,6 +50,7 @@ function clearScreen() {
 function renderProgress() {
   progressEl.textContent = `질문 ${history.length + 1}`;
   backBtn.style.display = history.length > 0 ? "inline-flex" : "none";
+  document.body.classList.toggle("started", history.length > 0);
 }
 
 function optionButton(label, onClick) {
@@ -192,20 +194,45 @@ function renderContactScreen() {
   phoneInput.placeholder = "연락처 (010-0000-0000)";
   screenBody.appendChild(phoneInput);
 
-  const consentLabel = document.createElement("label");
-  consentLabel.className = "consent";
-  const consentInput = document.createElement("input");
-  consentInput.type = "checkbox";
-  consentLabel.appendChild(consentInput);
-  const consentText = document.createElement("span");
-  consentText.innerHTML = '[필수] 개인정보 수집·이용에 동의합니다. 상담 목적으로만 사용하며 ' +
-    '<a href="privacy.html" target="_blank" rel="noopener">개인정보처리방침</a>에서 자세히 확인하세요.';
-  consentLabel.appendChild(consentText);
-  screenBody.appendChild(consentLabel);
+  // 동의 항목 — 홈페이지(go1q.co.kr) 비밀 혜택 신청창과 같은 구성
+  const PRIVACY_URL = "https://go1q.co.kr/privacy.html";
+  const consentBox = document.createElement("div");
+  consentBox.className = "consent-box";
+  const consents = [
+    { key: "all", text: "전체 동의" },
+    { key: "agree_privacy", text: "(필수) 개인정보 수집·이용 동의", href: PRIVACY_URL, required: true },
+    { key: "agree_third_party", text: "(필수) 개인정보 제3자 제공 및 활용 동의", href: PRIVACY_URL + "#third-party", required: true },
+    { key: "agree_age14", text: "(필수) 만 14세 이상입니다", required: true },
+    { key: "agree_marketing", text: "(선택) 혜택·이벤트 정보 수신 동의", href: PRIVACY_URL + "#marketing" },
+  ];
+  const boxes = {};
+  consents.forEach((c) => {
+    const label = document.createElement("label");
+    label.className = c.key === "all" ? "consent consent-all" : "consent";
+    const input = document.createElement("input");
+    input.type = "checkbox";
+    boxes[c.key] = input;
+    label.appendChild(input);
+    const span = document.createElement("span");
+    span.textContent = c.text;
+    label.appendChild(span);
+    if (c.href) {
+      const a = document.createElement("a");
+      a.href = c.href; a.target = "_blank"; a.rel = "noopener"; a.textContent = "보기";
+      label.appendChild(a);
+    }
+    consentBox.appendChild(label);
+  });
+  const items = consents.filter((c) => c.key !== "all");
+  boxes.all.addEventListener("change", () => items.forEach((c) => { boxes[c.key].checked = boxes.all.checked; }));
+  items.forEach((c) => boxes[c.key].addEventListener("change", () => {
+    boxes.all.checked = items.every((i) => boxes[i.key].checked);
+  }));
+  screenBody.appendChild(consentBox);
 
   const errorMsg = document.createElement("div");
   errorMsg.className = "error-msg";
-  errorMsg.textContent = "이름, 연락처, 개인정보 동의를 모두 입력해 주세요.";
+  errorMsg.textContent = "이름, 연락처를 입력하고 필수 항목에 모두 동의해 주세요.";
   screenBody.appendChild(errorMsg);
 
   const submitBtn = document.createElement("button");
@@ -213,13 +240,14 @@ function renderContactScreen() {
   submitBtn.className = "next-btn submit";
   submitBtn.textContent = "결과 보기";
   submitBtn.addEventListener("click", async () => {
-    if (!nameInput.value.trim() || !phoneInput.value.trim() || !consentInput.checked) {
+    if (!nameInput.value.trim() || !phoneInput.value.trim() || items.some((c) => c.required && !boxes[c.key].checked)) {
       errorMsg.classList.add("show");
       return;
     }
     errorMsg.classList.remove("show");
     answers.name = nameInput.value.trim();
     answers.phone = phoneInput.value.trim();
+    items.forEach((c) => { answers[c.key] = boxes[c.key].checked; });
 
     submitBtn.disabled = true;
     submitBtn.textContent = "제출 중...";
@@ -228,13 +256,24 @@ function renderContactScreen() {
   screenBody.appendChild(submitBtn);
 }
 
+const TRACK_NAMES = {
+  휴대폰: "A.휴대폰", "인터넷/TV": "I.인터넷·TV", 알뜰폰등: "B.알뜰폰 등", 가전렌탈: "R.가전렌탈",
+  자동차렌트리스: "V.자동차렌트리스", 이사청소: "M.이사청소", 상조: "S.상조", 보험: "N.보험",
+};
+
+// 어디서 왔는지(홈페이지 어느 버튼 등) — 홈페이지가 붙여 보내는 utm 값을 그대로 남긴다
+(function () {
+  const params = new URLSearchParams(location.search);
+  ["utm_source", "utm_medium", "utm_campaign", "utm_content"].forEach((k) => {
+    if (params.get(k)) answers[k] = params.get(k);
+  });
+  if (document.referrer) answers.referrer = document.referrer;
+})();
+
 async function submitAnswers() {
   const payload = {
     submittedAt: new Date().toISOString(),
-    track: answers.product_line === "휴대폰" ? "A.휴대폰"
-      : answers.product_line === "인터넷/TV" ? "I.인터넷·TV"
-      : ({ 알뜰폰등: "B.알뜰폰 등", 가전렌탈: "R.가전렌탈", 자동차렌트리스: "V.자동차렌트리스",
-          이사청소: "M.이사청소", 상조: "S.상조", 보험: "N.보험" }[answers.other_line_need] || "X.기타"),
+    track: TRACK_NAMES[answers.product_line] || "X.기타",
     urgent: answers.funeral_urgent === "예",
     answers,
   };
@@ -304,24 +343,24 @@ function buildResultContent() {
   if (answers.contract_status === "위약금발생") {
     const banner = document.createElement("div");
     banner.className = "warn-banner";
-    banner.textContent = "지금 통신사를 옮기면 위약금이 발생할 수 있어요 — 상담사가 실제 손익을 먼저 계산해 안내드립니다.";
+    banner.textContent = "지금 통신사를 옮기면 위약금이 발생할 수 있어요 — 대표가 실제 손익을 먼저 계산해 안내드립니다.";
     wrap.appendChild(banner);
   }
   if (answers.funeral_urgent === "예") {
     const badge = document.createElement("div");
     badge.className = "urgent-badge";
-    badge.textContent = "🚨 긴급 — 담당자가 최우선으로 연락드립니다";
+    badge.textContent = "긴급 — 대표가 최우선으로 직접 연락드립니다";
     wrap.appendChild(badge);
   }
 
   const cards = document.createElement("div");
   cards.className = "result-cards";
 
-  const isAlttel = answers.device_pref === "알뜰폰만" || answers.other_line_need === "알뜰폰등";
+  const isAlttel = answers.device_pref === "알뜰폰만" || answers.product_line === "알뜰폰등";
 
   if (isAlttel) {
     cards.appendChild(card("맞춤 요금제 추천",
-      "말씀하신 사용량 기준으로 가장 저렴한 요금제를 상담사가 바로 안내드립니다. 다른 곳보다 비싸면 바로 말씀해주세요."));
+      "말씀하신 사용량 기준으로 가장 저렴한 요금제를 대표가 직접 안내드립니다. 다른 곳보다 비싸면 바로 말씀해주세요."));
   } else if (answers.product_line === "휴대폰") {
     cards.appendChild(card("1안 · 표준 밸런스형",
       "결합 있으면 결합 유지 우선, 부가서비스는 0~1개만 유지. 총비용 기준으로 다른 안과 비교하기 좋아요.",
@@ -340,9 +379,9 @@ function buildResultContent() {
     cards.appendChild(card("3안 · 최저가형",
       "결합·구성 조건을 낮추더라도 월 요금 자체를 가장 낮춘 조합."));
   } else {
-    cards.appendChild(card("상담사 매칭 안내",
-      "입력하신 조건으로 상담사가 맞는 곳을 찾아 연락드립니다."));
-    if (answers.other_line_need === "가전렌탈" && RENTAL_CATALOG_URL) {
+    cards.appendChild(card("맞춤 상담 안내",
+      "입력하신 조건으로 대표가 직접 맞는 곳을 찾아 연락드립니다."));
+    if (answers.product_line === "가전렌탈" && RENTAL_CATALOG_URL) {
       const link = document.createElement("a");
       link.href = RENTAL_CATALOG_URL;
       link.target = "_blank";
@@ -356,7 +395,7 @@ function buildResultContent() {
 
   const disclaimer = document.createElement("p");
   disclaimer.className = "disclaimer";
-  disclaimer.textContent = "아직 확정 견적이 아니며, 상담사가 당일 정책표로 재확인 후 서면 견적을 드립니다.";
+  disclaimer.textContent = "아직 확정 견적이 아니며, 대표가 당일 정책표로 직접 재확인한 뒤 서면 견적을 드립니다.";
   wrap.appendChild(disclaimer);
 
   const kakaoWrap = document.createElement("div");
@@ -366,7 +405,7 @@ function buildResultContent() {
   chatBtn.href = KAKAO_CHAT_URL;
   chatBtn.target = "_blank";
   chatBtn.rel = "noopener";
-  chatBtn.textContent = "💬 카카오톡 1:1 상담하기";
+  chatBtn.textContent = "카카오톡 1:1 상담하기";
   const addBtn = document.createElement("a");
   addBtn.className = "btn-secondary";
   addBtn.href = KAKAO_ADD_URL;

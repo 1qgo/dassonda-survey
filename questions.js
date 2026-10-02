@@ -8,11 +8,20 @@ const QUESTIONS = [
     text: "어떤 걸 도와드릴까요?",
     options: [
       { value: "휴대폰", label: "휴대폰" },
-      { value: "인터넷/TV", label: "인터넷/TV" },
-      { value: "기타", label: "기타 (알뜰폰·가전렌탈·자동차·이사청소·상조·보험)" },
+      { value: "인터넷/TV", label: "인터넷·TV" },
+      { value: "알뜰폰등", label: "알뜰폰·선불폰·유심" },
+      { value: "가전렌탈", label: "가전렌탈 (정수기·안마의자 등)" },
+      { value: "자동차렌트리스", label: "자동차 렌트·리스" },
+      { value: "이사청소", label: "이사·청소" },
+      { value: "상조", label: "상조" },
+      { value: "보험", label: "보험" },
     ],
     field: "product_line",
-    next: (a) => (a.product_line === "휴대폰" ? "A1" : a.product_line === "인터넷/TV" ? "I1" : "X0"),
+    // 홈페이지 상품 구성에 맞춰 첫 화면에서 바로 펼친다 (예전 '기타 → X0' 단계 없앰)
+    next: (a) => ({
+      휴대폰: "A1", "인터넷/TV": "I1", 알뜰폰등: "B1", 가전렌탈: "R1",
+      자동차렌트리스: "V1", 이사청소: "M1", 상조: "S1", 보험: "N1",
+    }[a.product_line]),
   },
   {
     id: "A1", track: "A.휴대폰", type: "single",
@@ -88,7 +97,7 @@ const QUESTIONS = [
   {
     id: "A5-1", track: "A.휴대폰", type: "numberOrSkip",
     text: "잔여 약정 개월 수를 알고 계신가요?",
-    skipLabel: "모름 (상담사가 확인)",
+    skipLabel: "모름 (대표가 직접 확인)",
     field: "contract_months_left",
     next: () => "A6",
   },
@@ -240,24 +249,6 @@ const QUESTIONS = [
     next: () => "AZ",
   },
 
-  // ---- TRACK X: 기타 셀렉터 ----
-  {
-    id: "X0", track: "X.기타", type: "single",
-    text: "어떤 상품이 필요하세요?",
-    options: [
-      { value: "알뜰폰등", label: "알뜰폰·선불폰·유심" },
-      { value: "가전렌탈", label: "가전렌탈 (정수기·안마의자 등)" },
-      { value: "자동차렌트리스", label: "자동차 렌트·리스" },
-      { value: "이사청소", label: "이사·청소" },
-      { value: "상조", label: "상조" },
-      { value: "보험", label: "보험" },
-    ],
-    field: "other_line_need",
-    next: (a) => ({
-      알뜰폰등: "B1", 가전렌탈: "R1", 자동차렌트리스: "V1", 이사청소: "M1", 상조: "S1", 보험: "N1",
-    }[a.other_line_need]),
-  },
-
   // ---- TRACK B: 알뜰폰/선불폰/유심 ----
   {
     id: "B1", track: "B.알뜰폰 등", type: "single",
@@ -299,7 +290,6 @@ const QUESTIONS = [
   {
     id: "R1", track: "R.가전렌탈", type: "single",
     text: "어떤 가전을 알아보세요?",
-    help: "선택하신 품목의 제품 카탈로그 페이지로 연결됩니다.",
     options: [
       { value: "정수기", label: "정수기" },
       { value: "안마의자", label: "안마의자" },
@@ -314,10 +304,11 @@ const QUESTIONS = [
   // ---- TRACK V: 자동차 렌트/리스 ----
   {
     id: "V1", track: "V.자동차렌트리스", type: "single",
-    text: "렌트인가요, 리스인가요?",
+    text: "어떤 상품을 알아보세요?",
     options: [
-      { value: "렌트", label: "렌트 (단기 포함)" },
-      { value: "리스", label: "리스 (장기)" },
+      { value: "신차장기렌트", label: "신차 장기렌트" },
+      { value: "중고장기렌트", label: "중고 장기렌트" },
+      { value: "자동차리스", label: "자동차 리스" },
       { value: "모름", label: "잘 모름 - 비교해서 추천받고 싶음" },
     ],
     field: "auto_type",
@@ -325,12 +316,22 @@ const QUESTIONS = [
   },
   {
     id: "V2", track: "V.자동차렌트리스", type: "single",
-    text: "개인용인가요, 사업자용인가요?",
+    text: "어떤 명의로 이용하시나요?",
     options: [
       { value: "개인", label: "개인" },
-      { value: "사업자", label: "사업자" },
+      { value: "개인사업자", label: "개인사업자" },
+      { value: "법인사업자", label: "법인사업자" },
     ],
     field: "auto_usage_type",
+    next: () => "V2-1",
+  },
+  {
+    id: "V2-1", track: "V.자동차렌트리스", type: "textOrPick",
+    text: "원하시는 차종과 트림을 알려주세요",
+    help: "정확하지 않아도 괜찮아요. 아시는 만큼만 적어주세요.",
+    textPlaceholder: "예: 쏘렌토 하이브리드 시그니처",
+    options: [{ value: "__NONE__", label: "아직 미정 - 추천받고 싶음" }],
+    field: "auto_model",
     next: () => "V3",
   },
   {
@@ -434,5 +435,5 @@ const QUESTIONS = [
 
 const CONTACT_SCREEN = {
   id: "AZ", track: "공통 마감", type: "contact",
-  text: "연락처, 성함을 남겨주세요 (조회용)",
+  text: "연락처, 성함을 남겨주세요",
 };
