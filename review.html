@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>후기 남기기 | 고원규통신</title>
+<meta name="description" content="고원규통신에서 상담받으신 경험을 남겨주세요." />
+<meta name="robots" content="noindex" />
+<meta name="theme-color" content="#ffffff" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+<link rel="stylesheet" href="style.css" />
+<style>
+  /* 후기 폼 전용. 색·모서리는 style.css 토큰을 그대로 쓴다 */
+  .rv-form { margin-top: 24px; background: var(--card); border: 1px solid var(--line); border-radius: 24px; padding: 24px 20px; box-shadow: var(--shadow); }
+  .rv-field { margin: 0 0 22px; padding: 0; border: 0; }
+  .rv-field legend, .rv-label { display: block; margin: 0 0 10px; padding: 0; font-size: 16px; font-weight: 800; }
+  .rv-label small, .rv-field legend small { font-weight: 600; color: var(--muted); font-size: 13px; }
+  .rv-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .rv-chips label { display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; border: 1.5px solid var(--line); border-radius: 12px; background: #fff; font-size: 15px; font-weight: 600; cursor: pointer; }
+  .rv-chips input { position: absolute; opacity: 0; pointer-events: none; }
+  .rv-chips label:has(input:checked) { border-color: var(--brand); background: var(--brand-soft); color: var(--brand); }
+  .rv-chips label:has(input:focus-visible) { outline: 2px solid var(--brand); outline-offset: 2px; }
+  .rv-stars { display: flex; gap: 6px; }
+  .rv-stars label { cursor: pointer; }
+  .rv-stars input { position: absolute; opacity: 0; pointer-events: none; }
+  .rv-stars svg { display: block; width: 40px; height: 40px; fill: var(--line-2); transition: fill .12s; }
+  .rv-stars label.on svg { fill: #f5a524; }
+  .rv-stars label:has(input:focus-visible) svg { outline: 2px solid var(--brand); outline-offset: 2px; border-radius: 8px; }
+  .rv-rating-text { margin: 8px 0 0; font-size: 14px; color: var(--muted); min-height: 1.5em; }
+  .rv-count { margin: -4px 0 0; text-align: right; font-size: 13px; color: var(--muted); }
+  .rv-note { margin: 0 0 8px; font-size: 13.5px; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="https://go1q.co.kr/" aria-label="고원규통신 홈페이지">
+    <img class="brand-logo" src="assets/logo.svg" alt="고원규통신" width="144" height="36" />
+  </a>
+  <span class="brand-store">다쏜다 광명사거리역점</span>
+</header>
+
+<div class="wrap">
+  <section class="hero">
+    <p class="eyebrow">후기 남기기</p>
+    <h1>상담은 어떠셨나요?<br /><em>솔직하게 남겨주세요.</em></h1>
+    <p class="hero-sub">좋았던 점도, 아쉬웠던 점도 그대로 받습니다. 게시에 동의해 주신 후기만 이름을 가려서 홈페이지에 올립니다.</p>
+  </section>
+
+  <form class="rv-form" id="reviewForm" novalidate>
+    <fieldset class="rv-field">
+      <legend>어떤 상담을 받으셨나요?</legend>
+      <div class="rv-chips" id="productChips"></div>
+    </fieldset>
+
+    <fieldset class="rv-field">
+      <legend>별점</legend>
+      <div class="rv-stars" id="stars"></div>
+      <p class="rv-rating-text" id="ratingText" aria-live="polite"></p>
+    </fieldset>
+
+    <div class="rv-field">
+      <label class="rv-label" for="reviewText">후기 <small>(10자 이상)</small></label>
+      <textarea id="reviewText" rows="5" maxlength="500" placeholder="예) 받은 견적을 보냈더니 부가서비스 조건을 짚어주셨어요."></textarea>
+      <p class="rv-count"><span id="reviewLen">0</span> / 500</p>
+    </div>
+
+    <div class="rv-field">
+      <label class="rv-label" for="name">이름</label>
+      <p class="rv-note">홈페이지에는 김*수처럼 가운데 글자를 가려서 올립니다.</p>
+      <input type="text" id="name" autocomplete="name" maxlength="20" />
+      <label class="rv-label" for="phone">연락처 <small>(공개되지 않음 · 실제 상담 고객 확인용)</small></label>
+      <input type="tel" id="phone" autocomplete="tel" inputmode="numeric" maxlength="13" placeholder="010-0000-0000" />
+    </div>
+
+    <div class="consent-box">
+      <label class="consent consent-all"><input type="checkbox" id="agreeAll" /> 전체 동의</label>
+      <label class="consent"><input type="checkbox" class="agree" id="agreePublish" /> [필수] 후기 게시 동의 (이름 일부를 가려 홈페이지에 게시)</label>
+      <label class="consent"><input type="checkbox" class="agree" id="agreePrivacy" /> [필수] 개인정보 수집·이용 동의 <a href="privacy.html" target="_blank" rel="noopener">보기</a></label>
+    </div>
+
+    <p class="error-msg" id="errorMsg" role="alert"></p>
+    <button type="submit" class="submit" id="submitBtn">후기 보내기</button>
+  </form>
+
+  <div class="state" id="doneState">
+    <h2>후기 감사합니다</h2>
+    <p>확인 후 홈페이지에 게시하겠습니다.<br />남겨주신 말씀은 상담에 그대로 반영하겠습니다.</p>
+    <div class="kakao-actions"><a class="btn-secondary" href="https://go1q.co.kr/">홈페이지로 가기</a></div>
+  </div>
+
+  <div class="state" id="failState">
+    <h2>전송에 실패했습니다</h2>
+    <p>네트워크 오류일 수 있어요. 잠시 후 다시 시도해 주세요.</p>
+    <div class="kakao-actions"><button class="btn-secondary" id="retryBtn" type="button">다시 시도</button></div>
+  </div>
+
+  <footer class="site-footer">
+    <p class="footer-links"><a href="https://go1q.co.kr/">고원규통신 홈페이지</a><a href="privacy.html"><b>개인정보처리방침</b></a></p>
+    <p>고원규통신 · 상호 다쏜다 광명사거리역점 · 대표 고원규<br />사업자등록번호 434-56-00928 · 010-5244-9992</p>
+  </footer>
+</div>
+
+<script>
+// 설문(script.js)과 같은 Apps Script로 보낸다. 시트에는 트랙 "후기"로 쌓이고 Slack으로 알림이 간다.
+const GAS_ENDPOINT = "https://script.google.com/macros/s/AKfycbxx4pmOQ0eoutB26EuE9s2KhMGu-pWR_TdrD4zNU2ney8WmftA2zpq36aQoMovJMcit/exec";
+const PRODUCTS = ["휴대폰", "인터넷·TV", "가전렌탈", "자동차", "이사", "상조", "보험", "기타"];
+const RATING_TEXT = ["", "아쉬웠어요", "그저 그랬어요", "보통이었어요", "좋았어요", "아주 좋았어요"];
+const STAR = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z"/></svg>';
+
+const form = document.getElementById("reviewForm");
+const err = document.getElementById("errorMsg");
+let rating = 0;
+
+document.getElementById("productChips").innerHTML = PRODUCTS.map(function (p) {
+  return '<label><input type="radio" name="product" value="' + p + '" />' + p + "</label>";
+}).join("");
+
+const starsBox = document.getElementById("stars");
+starsBox.innerHTML = [1, 2, 3, 4, 5].map(function (n) {
+  return '<label aria-label="' + n + '점"><input type="radio" name="rating" value="' + n + '" />' + STAR + "</label>";
+}).join("");
+function paintStars(n) {
+  starsBox.querySelectorAll("label").forEach(function (l, i) { l.classList.toggle("on", i < n); });
+  document.getElementById("ratingText").textContent = RATING_TEXT[n] || "";
+}
+starsBox.addEventListener("change", function (e) { rating = Number(e.target.value); paintStars(rating); });
+
+const text = document.getElementById("reviewText");
+text.addEventListener("input", function () { document.getElementById("reviewLen").textContent = text.value.length; });
+
+const agrees = Array.prototype.slice.call(document.querySelectorAll(".agree"));
+const agreeAll = document.getElementById("agreeAll");
+agreeAll.addEventListener("change", function () { agrees.forEach(function (a) { a.checked = agreeAll.checked; }); });
+agrees.forEach(function (a) { a.addEventListener("change", function () { agreeAll.checked = agrees.every(function (x) { return x.checked; }); }); });
+
+// 이름 가운데 가리기: 김민수 → 김*수, 이준 → 이*, 남궁민수 → 남**수
+function maskName(n) {
+  n = n.trim();
+  if (n.length <= 1) return n;
+  if (n.length === 2) return n[0] + "*";
+  return n[0] + "*".repeat(n.length - 2) + n[n.length - 1];
+}
+
+function fail(msg) { err.textContent = msg; err.classList.add("show"); }
+
+form.addEventListener("submit", async function (e) {
+  e.preventDefault();
+  err.classList.remove("show");
+  const product = (form.querySelector('input[name="product"]:checked') || {}).value;
+  const name = document.getElementById("name").value.trim();
+  const phone = document.getElementById("phone").value.replace(/[^0-9]/g, "");
+  if (!product) return fail("상담받은 상품을 골라주세요.");
+  if (!rating) return fail("별점을 눌러주세요.");
+  if (text.value.trim().length < 10) return fail("후기를 10자 이상 적어주세요.");
+  if (!name) return fail("이름을 적어주세요.");
+  if (!/^01[0-9]{8,9}$/.test(phone)) return fail("연락처를 확인해 주세요.");
+  if (!agrees.every(function (a) { return a.checked; })) return fail("필수 항목에 동의해 주세요.");
+
+  const btn = document.getElementById("submitBtn");
+  btn.disabled = true;
+  const params = new URLSearchParams(location.search);
+  const payload = {
+    submittedAt: new Date().toISOString(),
+    track: "후기",
+    answers: {
+      name: name, phone: phone, review_product: product, review_rating: rating,
+      review_text: text.value.trim(), review_display_name: maskName(name),
+      agree_publish: true, agree_privacy: true,
+      utm_source: params.get("utm_source") || "", utm_content: params.get("utm_content") || ""
+    }
+  };
+  try {
+    await fetch(GAS_ENDPOINT, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) });
+    form.style.display = "none";
+    document.getElementById("doneState").classList.add("show");
+  } catch (x) {
+    form.style.display = "none";
+    document.getElementById("failState").classList.add("show");
+  } finally {
+    btn.disabled = false;
+  }
+});
+document.getElementById("retryBtn").addEventListener("click", function () {
+  document.getElementById("failState").classList.remove("show");
+  form.style.display = "";
+});
+</script>
+</body>
+</html>
