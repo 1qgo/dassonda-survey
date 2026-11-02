@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<title>신분증 스캔 안내 | 고원규통신</title>
+<meta name="description" content="휴대폰 사진 대신 스캐너로 신분증을 스캔해 주세요. 스캐너 있는 곳 찾기부터 보내는 방법까지 쉽게 알려드려요." />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="신분증 스캔 안내 | 고원규통신" />
+<meta property="og:description" content="스캐너 있는 곳 찾기부터 보내는 방법까지, 차례대로 따라 하시면 됩니다." />
+<meta property="og:image" content="https://survey.go1q.co.kr/assets/scan/scan-place.jpg" />
+<meta property="og:url" content="https://survey.go1q.co.kr/scan.html" />
+<meta name="theme-color" content="#ffffff" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+<style>
+  :root {
+    --ink: #14202b; --ink-2: #2a3642; --muted: #4f5a65;
+    --line: #e2dfdb; --bg: #f7f6f4; --card: #fff;
+    --brand: #d23f0f; --brand-vivid: #f05a28; --brand-soft: #fff0e9;
+    --ok: #1b7f3b; --ok-soft: #e8f6ec; --no: #c62828; --no-soft: #fdecec;
+    --kakao: #fee500; --kakao-ink: #191600;
+  }
+  * { box-sizing: border-box; }
+  html { font-size: 20px; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    line-height: 1.6; letter-spacing: -.01em; word-break: keep-all; -webkit-text-size-adjust: 100%;
+  }
+  a { color: inherit; }
+  img { max-width: 100%; height: auto; display: block; }
+
+  .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    height: 64px; padding: 0 16px; background: #fff; border-bottom: 1px solid var(--line); }
+  .topbar img { height: 32px; width: auto; }
+  .topbar span { font-size: .7rem; color: var(--muted); font-weight: 600; }
+
+  .wrap { max-width: 680px; margin: 0 auto; padding: 20px 16px 56px; }
+
+  h1 { font-size: 1.6rem; line-height: 1.3; margin: 8px 0 6px; }
+  .lead { font-size: 1rem; color: var(--ink-2); margin: 0 0 20px; }
+
+  .notice { background: var(--ink); color: #fff; border-radius: 16px; padding: 20px; margin-bottom: 24px; }
+  .notice h2 { font-size: 1.05rem; margin: 0 0 10px; display: flex; gap: 8px; align-items: center; color: #fff; }
+  .notice p { margin: 0 0 8px; font-size: .92rem; color: #e9edf1; }
+  .notice p:last-child { margin: 0; }
+  .notice b { color: #ffd2c0; }
+
+  .toc { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 0 0 28px; padding: 0; list-style: none; }
+  .toc a { display: flex; gap: 8px; align-items: center; min-height: 56px; padding: 10px 14px;
+    background: #fff; border: 1px solid var(--line); border-radius: 12px; text-decoration: none; font-weight: 700; font-size: .85rem; }
+  .toc .n { flex: none; width: 28px; height: 28px; border-radius: 999px; background: var(--brand-vivid); color: #fff;
+    display: grid; place-items: center; font-size: .75rem; }
+
+  section.part { background: var(--card); border: 1px solid var(--line); border-radius: 24px; padding: 22px 18px; margin-bottom: 20px; scroll-margin-top: 12px; }
+  .part-head { display: flex; gap: 12px; align-items: center; margin-bottom: 14px; }
+  .part-num { flex: none; width: 44px; height: 44px; border-radius: 999px; background: var(--brand-vivid); color: #fff;
+    display: grid; place-items: center; font-weight: 800; font-size: 1.1rem; }
+  .part h2 { font-size: 1.3rem; line-height: 1.3; margin: 0; }
+  .part > p { margin: 0 0 14px; font-size: .95rem; color: var(--ink-2); }
+  .pic { border-radius: 16px; overflow: hidden; border: 1px solid var(--line); margin: 0 0 16px; background: #fff; }
+  .pic figcaption { font-size: .7rem; color: var(--muted); padding: 6px 12px; border-top: 1px solid var(--line); }
+
+  .place { border: 2px solid var(--line); border-radius: 16px; padding: 16px; margin-bottom: 12px; }
+  .place.best { border-color: var(--brand-vivid); background: var(--brand-soft); }
+  .place h3 { margin: 0 0 4px; font-size: 1.05rem; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .tag { font-size: .65rem; font-weight: 800; color: #fff; background: var(--brand); border-radius: 999px; padding: 2px 10px; }
+  .place p { margin: 0 0 12px; font-size: .88rem; color: var(--ink-2); }
+  .btn-map { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 60px; width: 100%;
+    border-radius: 12px; background: #03c75a; color: #fff; font-weight: 800; font-size: 1rem; text-decoration: none; }
+  .btn-sub { display: block; text-align: center; margin-top: 8px; font-size: .8rem; color: var(--muted); padding: 6px; }
+
+  ol.steps { list-style: none; margin: 0; padding: 0; counter-reset: s; }
+  ol.steps > li { counter-increment: s; position: relative; padding: 0 0 22px 58px; }
+  ol.steps > li::before { content: counter(s); position: absolute; left: 0; top: 0; width: 44px; height: 44px; border-radius: 999px;
+    background: var(--ink); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 1.05rem; }
+  ol.steps > li:not(:last-child)::after { content: ""; position: absolute; left: 21px; top: 50px; bottom: 6px; width: 2px; background: var(--line); }
+  ol.steps h3 { font-size: 1.08rem; margin: 6px 0 4px; line-height: 1.35; }
+  ol.steps p { margin: 0 0 8px; font-size: .9rem; color: var(--ink-2); }
+  .setting { display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; background: var(--bg); border-radius: 12px; padding: 12px 14px; margin: 8px 0; font-size: .9rem; }
+  .setting dt { font-weight: 700; color: var(--muted); }
+  .setting dd { margin: 0; font-weight: 800; }
+  .warn { background: var(--brand-soft); border-left: 4px solid var(--brand-vivid); border-radius: 8px; padding: 10px 12px; font-size: .85rem; margin: 8px 0 0; }
+
+  .compare { display: grid; gap: 10px; }
+  .compare .row { display: flex; gap: 12px; align-items: center; padding: 12px 14px; border-radius: 12px; font-size: .92rem; font-weight: 700; }
+  .compare .ok { background: var(--ok-soft); color: #0f4d23; }
+  .compare .no { background: var(--no-soft); color: #7d1717; }
+  .compare .ic { flex: none; width: 32px; height: 32px; border-radius: 999px; display: grid; place-items: center; color: #fff; font-weight: 900; }
+  .compare .ok .ic { background: var(--ok); }
+  .compare .no .ic { background: var(--no); }
+
+  .checks { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .checks label { display: flex; gap: 14px; align-items: center; min-height: 60px; padding: 12px 14px;
+    border: 2px solid var(--line); border-radius: 12px; font-size: .95rem; font-weight: 700; cursor: pointer; }
+  .checks input { width: 28px; height: 28px; accent-color: var(--ok); flex: none; }
+  .checks label:has(input:checked) { border-color: var(--ok); background: var(--ok-soft); }
+  .all-ok { display: none; margin-top: 12px; padding: 14px; border-radius: 12px; background: var(--ok); color: #fff; font-weight: 800; text-align: center; }
+  .all-ok.show { display: block; }
+
+  .staff { background: #fffbe6; border: 2px dashed #e0b800; border-radius: 16px; padding: 18px; }
+  .staff .say { font-size: 1.15rem; font-weight: 800; line-height: 1.5; margin: 6px 0 0; }
+
+  .btn { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 64px; width: 100%;
+    border-radius: 16px; font-weight: 800; font-size: 1.05rem; text-decoration: none; border: 0; cursor: pointer; font-family: inherit; }
+  .btn-kakao { background: var(--kakao); color: var(--kakao-ink); }
+  .btn-tel { background: var(--ink); color: #fff; margin-top: 10px; }
+  .btn-share { background: #fff; color: var(--ink); border: 2px solid var(--line); margin-top: 10px; }
+
+  .footer { text-align: center; font-size: .7rem; color: var(--muted); margin-top: 28px; line-height: 1.7; }
+  .footer a { margin: 0 6px; }
+  .toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: var(--ink); color: #fff;
+    padding: 12px 20px; border-radius: 999px; font-size: .85rem; opacity: 0; transition: opacity .2s; pointer-events: none; }
+  .toast.show { opacity: 1; }
+
+  @media (max-width: 380px) { html { font-size: 18px; } .toc { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a href="https://go1q.co.kr/" aria-label="고원규통신 홈페이지"><img src="assets/logo.svg" alt="고원규통신" width="128" height="32" /></a>
+  <span>다쏜다 광명사거리역점</span>
+</header>
+
+<main class="wrap">
+
+  <div class="notice" role="note">
+    <h2>🔒 개인정보 보호 안내</h2>
+    <p>저희는 <b>통신판매 사업자의 개인정보 보호 기준</b>을 엄격히 지키고 있습니다.</p>
+    <p>휴대폰으로 찍은 신분증 사진은 나중에 <b>명의도용</b>에 쓰일 수 있어 받지 않습니다.</p>
+    <p>번거로우시더라도 <b>스캐너로 스캔한 정식 규격 파일</b>을 보내 주세요. 안전하게 암호화해 개통에만 쓰고, <b>개통이 끝나면 모든 정보를 바로 폐기</b>합니다.</p>
+  </div>
+
+  <h1>신분증 스캔,<br />이렇게 하시면 됩니다</h1>
+  <p class="lead">아래 순서대로 천천히 따라 해 주세요.<br />어려우시면 맨 아래 <b>전화 버튼</b>을 눌러 주세요.</p>
+
+  <ul class="toc">
+    <li><a href="#find"><span class="n">1</span>스캐너 찾기</a></li>
+    <li><a href="#how"><span class="n">2</span>스캔하기</a></li>
+    <li><a href="#check"><span class="n">3</span>잘 됐는지 확인</a></li>
+    <li><a href="#send"><span class="n">4</span>보내기</a></li>
+  </ul>
+
+  <!-- 1. 스캐너 찾기 -->
+  <section class="part" id="find">
+    <div class="part-head"><span class="part-num">1</span><h2>스캐너 있는 곳 찾기</h2></div>
+    <p>버튼을 누르면 <b>지금 계신 곳 근처</b>를 지도에서 찾아 드려요.</p>
+    <figure class="pic"><img src="assets/scan/scan-place.jpg" alt="무인 프린트카페의 복합기 옆에 선 어르신 그림" width="1200" height="800" loading="lazy" /><figcaption>예시 그림</figcaption></figure>
+
+    <div class="place best">
+      <h3>🏬 매장에 오시기 <span class="tag">가장 쉬워요</span></h3>
+      <p>신분증만 가져오시면 저희가 <b>1분 만에</b> 스캔해 드리고 바로 돌려드려요.</p>
+      <a class="btn-map" href="https://map.naver.com/p/search/%EB%8B%A4%EC%8F%9C%EB%8B%A4%20%EA%B4%91%EB%AA%85%EC%82%AC%EA%B1%B0%EB%A6%AC%EC%97%AD%EC%A0%90" target="_blank" rel="noopener">📍 매장 위치 보기</a>
+    </div>
+
+    <div class="place">
+      <h3>🖨️ 무인 프린트카페</h3>
+      <p>24시간 여는 곳이 많아요. 기계 화면에서 바로 스캔할 수 있어요. (요금이 조금 들 수 있어요)</p>
+      <a class="btn-map" href="https://map.naver.com/p/search/%ED%94%84%EB%A6%B0%ED%8A%B8%EC%B9%B4%ED%8E%98" target="_blank" rel="noopener">🔍 가까운 프린트카페 찾기</a>
+      <a class="btn-sub" href="https://map.kakao.com/link/search/%ED%94%84%EB%A6%B0%ED%8A%B8%EC%B9%B4%ED%8E%98" target="_blank" rel="noopener">카카오맵으로 찾기 ›</a>
+    </div>
+
+    <div class="place">
+      <h3>📠 문구점 · 복사집</h3>
+      <p>직원에게 아래 <b>"직원에게 보여주세요"</b> 화면을 보여 주시면 돼요.</p>
+      <a class="btn-map" href="https://map.naver.com/p/search/%EB%B3%B5%EC%82%AC%EC%A0%90" target="_blank" rel="noopener">🔍 가까운 복사집 찾기</a>
+      <a class="btn-sub" href="https://map.kakao.com/link/search/%EB%B3%B5%EC%82%AC%EC%A0%90" target="_blank" rel="noopener">카카오맵으로 찾기 ›</a>
+    </div>
+
+    <div class="place">
+      <h3>🏛️ 주민센터(동사무소) · 도서관</h3>
+      <p>복합기가 있는 곳이 많지만, <b>파일로 받는 스캔은 안 되는 곳도 있어요.</b> 가시기 전에 전화로 "신분증 스캔해서 파일로 받을 수 있나요?" 하고 물어보세요.</p>
+      <a class="btn-map" href="https://map.naver.com/p/search/%EC%A3%BC%EB%AF%BC%EC%84%BC%ED%84%B0" target="_blank" rel="noopener">🔍 가까운 주민센터 찾기</a>
+      <a class="btn-sub" href="https://map.naver.com/p/search/%EB%8F%84%EC%84%9C%EA%B4%80" target="_blank" rel="noopener">가까운 도서관 찾기 ›</a>
+    </div>
+
+    <div class="staff" id="staff">
+      <strong>🙋 직원에게 보여주세요</strong>
+      <p class="say">"신분증 앞면을 <u>컬러, 300DPI 이상</u>, <u>A4 세로</u>로 스캔해서, 이 휴대폰으로 파일을 받고 싶어요."</p>
+    </div>
+  </section>
+
+  <!-- 2. 스캔하기 -->
+  <section class="part" id="how">
+    <div class="part-head"><span class="part-num">2</span><h2>스캔하기</h2></div>
+    <p>기계마다 화면은 조금 달라도 순서는 같아요.</p>
+
+    <ol class="steps">
+      <li>
+        <h3>화면에서 <b>'스캔'</b>을 누르세요</h3>
+        <p>'복사'가 아니라 <b>'스캔'</b>이에요. 결제 화면이 나오면 안내대로 결제해 주세요.</p>
+      </li>
+      <li>
+        <h3>뚜껑을 열고, 신분증 <b>앞면이 아래로</b> 가게 놓으세요</h3>
+        <p>유리판 <b>왼쪽 위 모서리</b>에 딱 맞춰 놓아 주세요. 신분증은 <b>평소 보는 방향 그대로</b> 놓으면 돼요.</p>
+        <figure class="pic"><img src="assets/scan/scan-place-card.jpg" alt="복합기 유리판 왼쪽 위 모서리에 카드를 앞면이 아래로 가게 놓는 그림" width="1200" height="800" loading="lazy" /><figcaption>예시 그림 · 앞면이 유리에 닿게, 왼쪽 위 모서리에</figcaption></figure>
+      </li>
+      <li>
+        <h3><b>뚜껑을 꼭 닫으세요</b></h3>
+        <p>열어 두면 빛이 들어가 <b>홀로그램이 번져</b> 다시 하셔야 해요.</p>
+      </li>
+      <li>
+        <h3>설정을 이렇게 맞추세요</h3>
+        <dl class="setting">
+          <dt>해상도</dt><dd>300DPI 이상 (600도 좋아요)</dd>
+          <dt>색상</dt><dd>컬러</dd>
+          <dt>방향</dt><dd>세로 (A4 세로)</dd>
+          <dt>파일</dt><dd>PDF 또는 JPG</dd>
+        </dl>
+        <p class="warn">해상도는 'DPI' 또는 '화질'이라고 적혀 있어요. 모르겠으면 <b>가장 높은 값</b>을 고르세요.</p>
+      </li>
+      <li>
+        <h3><b>'시작'</b>을 누르세요</h3>
+        <p>기계가 '위잉' 소리를 내며 한 번 지나가면 끝이에요.</p>
+      </li>
+      <li>
+        <h3>파일을 휴대폰으로 받으세요</h3>
+        <p>화면에 나오는 방법 중 편한 걸 고르세요.</p>
+        <dl class="setting">
+          <dt>QR코드</dt><dd>휴대폰 카메라로 찍으면 바로 받아져요</dd>
+          <dt>이메일</dt><dd>내 이메일 주소를 입력하세요</dd>
+        </dl>
+        <p class="warn">다 끝나면 <b>신분증을 꼭 챙기세요!</b> 유리판 위에 두고 가시는 분이 많아요.</p>
+      </li>
+    </ol>
+  </section>
+
+  <!-- 3. 확인 -->
+  <section class="part" id="check">
+    <div class="part-head"><span class="part-num">3</span><h2>잘 됐는지 확인하기</h2></div>
+    <figure class="pic"><img src="assets/scan/scan-good-bad.jpg" alt="왼쪽은 반듯하게 스캔된 카드, 오른쪽은 휴대폰으로 비스듬히 찍어 빛이 반사된 카드" width="1200" height="800" loading="lazy" /><figcaption>예시 그림 · 왼쪽처럼 되면 성공</figcaption></figure>
+
+    <div class="compare">
+      <div class="row ok"><span class="ic">✓</span>스캐너로 반듯하게, 글자가 또렷하게</div>
+      <div class="row no"><span class="ic">✕</span>휴대폰으로 찍은 사진</div>
+      <div class="row no"><span class="ic">✕</span>빛 반사 · 홀로그램 번짐</div>
+      <div class="row no"><span class="ic">✕</span>파일이 가로로 누움 · 비뚤어짐</div>
+      <div class="row no"><span class="ic">✕</span>흐릿하거나 글자가 잘림</div>
+    </div>
+
+    <p style="margin:18px 0 10px;font-weight:800;">보내기 전에 하나씩 눌러 확인해 보세요</p>
+    <ul class="checks" id="checks">
+      <li><label><input type="checkbox" /><span>이름 · 주민번호가 <b>다 읽혀요</b></span></label></li>
+      <li><label><input type="checkbox" /><span>빛 번짐 없이 <b>깨끗해요</b></span></label></li>
+      <li><label><input type="checkbox" /><span>파일이 <b>세로</b>이고 글자가 <b>똑바로</b> 보여요</span></label></li>
+      <li><label><input type="checkbox" /><span>네 귀퉁이가 <b>다 보여요</b></span></label></li>
+    </ul>
+    <div class="all-ok" id="allOk">👍 잘 하셨어요! 이제 보내 주시면 됩니다</div>
+  </section>
+
+  <!-- 4. 보내기 -->
+  <section class="part" id="send">
+    <div class="part-head"><span class="part-num">4</span><h2>보내기</h2></div>
+    <p>받으신 스캔 파일을 <b>카카오톡 상담창</b>으로 보내 주세요. 담당자가 확인하고 연락드릴게요.</p>
+    <a class="btn btn-kakao" href="https://pf.kakao.com/_ZFSrX/chat" target="_blank" rel="noopener">💬 카카오톡으로 보내기</a>
+    <a class="btn btn-tel" href="tel:01052449992">📞 어려우면 전화 주세요 (010-5244-9992)</a>
+    <button class="btn btn-share" type="button" id="shareBtn">🔗 이 안내 공유하기 (가족에게 보내기)</button>
+  </section>
+
+  <footer class="footer">
+    <p><a href="https://go1q.co.kr/">고원규통신 홈페이지</a><a href="https://go1q.co.kr/privacy.html"><b>개인정보처리방침</b></a></p>
+    <p>고원규통신 · 상호 다쏜다 광명사거리역점 · 대표 고원규<br />사업자등록번호 434-56-00928 · 010-5244-9992</p>
+  </footer>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+  (function () {
+    var boxes = document.querySelectorAll('#checks input');
+    var allOk = document.getElementById('allOk');
+    function update() {
+      var done = Array.prototype.every.call(boxes, function (b) { return b.checked; });
+      allOk.classList.toggle('show', done);
+    }
+    boxes.forEach(function (b) { b.addEventListener('change', update); });
+
+    var toast = document.getElementById('toast');
+    function say(msg) { toast.textContent = msg; toast.classList.add('show'); setTimeout(function () { toast.classList.remove('show'); }, 2200); }
+
+    document.getElementById('shareBtn').addEventListener('click', function () {
+      var data = { title: '신분증 스캔 안내', text: '신분증 스캔하는 방법 안내예요.', url: 'https://survey.go1q.co.kr/scan.html' };
+      if (navigator.share) { navigator.share(data).catch(function () {}); return; }
+      var done = function () { say('링크를 복사했어요. 카톡에 붙여넣기 하세요'); };
+      if (navigator.clipboard) { navigator.clipboard.writeText(data.url).then(done, function () { prompt('이 주소를 복사하세요', data.url); }); }
+      else { prompt('이 주소를 복사하세요', data.url); }
+    });
+  })();
+</script>
+</body>
+</html>
