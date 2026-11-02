@@ -128,13 +128,35 @@
           <label><input type="radio" name="idType" value="운전면허증" />운전면허증</label>
         </div>
       </div>
-      <div class="su-field" id="idIssueField">
-        <label class="su-label" for="idIssueDate">주민등록증 발급일자 <small>(신분증 앞면 아래쪽)</small></label>
-        <input type="date" id="idIssueDate" />
-      </div>
       <div class="su-field" id="licenseField" hidden>
-        <label class="su-label" for="licenseNo">운전면허 번호 <small>(12자리)</small></label>
-        <input type="text" id="licenseNo" inputmode="numeric" placeholder="11-23-123456-01" maxlength="20" autocomplete="off" />
+        <label class="su-label" for="licenseRegion">운전면허 지역</label>
+        <select id="licenseRegion" name="licenseRegion">
+          <option value="">지역 선택</option>
+          <option value="11">서울(11)</option>
+          <option value="12">부산(12)</option>
+          <option value="13">경기(13)</option>
+          <option value="14">강원(14)</option>
+          <option value="15">충북(15)</option>
+          <option value="16">충남(16)</option>
+          <option value="17">전북(17)</option>
+          <option value="18">전남(18)</option>
+          <option value="19">경북(19)</option>
+          <option value="20">경남(20)</option>
+          <option value="21">제주(21)</option>
+          <option value="22">대구(22)</option>
+          <option value="23">인천(23)</option>
+          <option value="24">광주(24)</option>
+          <option value="25">대전(25)</option>
+          <option value="26">울산(26)</option>
+          <option value="28">없음(28)</option>
+        </select>
+        <label class="su-label" for="licenseNo" style="margin-top:12px">운전면허 번호 <small>(지역번호를 제외한 10자리)</small></label>
+        <input type="text" id="licenseNo" name="licenseNo" inputmode="numeric"
+               placeholder="하이픈(-) 없이 숫자 10자리" maxlength="10" autocomplete="off" />
+      </div>
+      <div class="su-field" id="idIssueField">
+        <label class="su-label" for="idIssueDate"><span id="idIssueLabel">주민등록증 발급일자</span> <small>(신분증 앞면 아래쪽)</small></label>
+        <input type="date" id="idIssueDate" required />
       </div>
     </fieldset>
 
@@ -239,6 +261,6 @@
 </div>
 
 <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-<script src="signup.js"></script>
+<script src="signup.js?v=20261103-issue-date"></script>
 </body>
 </html>

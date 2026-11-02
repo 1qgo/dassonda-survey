@@ -27,16 +27,6 @@ function formatCard(v) {
   return onlyDigits(v).slice(0, 16).replace(/(\d{4})(?=\d)/g, "$1-");
 }
 
-function formatLicense(v) {
-  // 지역번호가 한글(구형: "서울")이면 그대로 두고 숫자부만 정리
-  const m = v.match(/^\s*([가-힣]{2})\s*(.*)$/);
-  if (m) {
-    const d = onlyDigits(m[2]).slice(0, 10);
-    return `${m[1]} ${groupLicense(d, [2, 6, 2])}`.trim();
-  }
-  return groupLicense(onlyDigits(v).slice(0, 12), [2, 2, 6, 2]);
-}
-
 function groupLicense(d, sizes) {
   const parts = [];
   let i = 0;
@@ -54,7 +44,7 @@ function bindFormat(id, fn) {
 
 bindFormat("phone", formatPhone);
 bindFormat("cardNo", formatCard);
-bindFormat("licenseNo", formatLicense);
+bindFormat("licenseNo", (v) => onlyDigits(v).slice(0, 10));
 bindFormat("rrnFront", (v) => onlyDigits(v).slice(0, 6));
 bindFormat("rrnBack", (v) => onlyDigits(v).slice(0, 7));
 bindFormat("accountNo", (v) => v.replace(/[^\d-]/g, "").slice(0, 20));
@@ -96,7 +86,7 @@ function radioValue(name) {
 
 function syncBranches() {
   const isLicense = radioValue("idType") === "운전면허증";
-  $("idIssueField").hidden = isLicense;
+  $("idIssueLabel").textContent = isLicense ? "운전면허증 발급일자" : "주민등록증 발급일자";
   $("licenseField").hidden = !isLicense;
 
   const isCard = radioValue("payMethod") === "카드";
@@ -188,8 +178,8 @@ function collect() {
     address2: $("address2").value.trim(),
     rrn: `${$("rrnFront").value}-${$("rrnBack").value}`,
     idType,
-    idIssueDate: idType === "주민등록증" ? $("idIssueDate").value : "",
-    licenseNo: idType === "운전면허증" ? $("licenseNo").value.trim() : "",
+    idIssueDate: $("idIssueDate").value,
+    licenseNo: idType === "운전면허증" ? `${$("licenseRegion").value}-${groupLicense(onlyDigits($("licenseNo").value), [2, 6, 2])}` : "",
     payMethod,
   };
   if (payMethod === "은행") {
@@ -212,12 +202,12 @@ function validate(d) {
   if (!d.address1) return ["address1", "주소 검색으로 주소를 입력해 주세요."];
   if (!d.address2) return ["address2", "상세주소(동·호수)를 입력해 주세요."];
   if (!isValidRrn($("rrnFront").value, $("rrnBack").value)) return ["rrnFront", "주민등록번호를 정확히 입력해 주세요."];
-  if (d.idType === "주민등록증") {
-    if (!d.idIssueDate) return ["idIssueDate", "주민등록증 발급일자를 입력해 주세요."];
-    if (d.idIssueDate > new Date().toISOString().slice(0, 10)) return ["idIssueDate", "발급일자가 오늘 이후일 수 없습니다."];
-  } else if (!isValidLicense(d.licenseNo)) {
-    return ["licenseNo", "운전면허 번호 12자리를 정확히 입력해 주세요."];
+  if (d.idType === "운전면허증") {
+    if (!$("licenseRegion").value) return ["licenseRegion", "운전면허 지역을 선택해 주세요."];
+    if (!isValidLicense(d.licenseNo)) return ["licenseNo", "지역번호를 제외한 운전면허 번호 10자리를 입력해 주세요."];
   }
+  if (!d.idIssueDate) return ["idIssueDate", `${d.idType} 발급일자를 입력해 주세요.`];
+  if (d.idIssueDate > new Date().toISOString().slice(0, 10)) return ["idIssueDate", "발급일자가 오늘 이후일 수 없습니다."];
   if (d.payMethod === "은행") {
     if (!d.bankName) return ["bankName", "은행을 선택해 주세요."];
     const n = onlyDigits(d.accountNo).length;
