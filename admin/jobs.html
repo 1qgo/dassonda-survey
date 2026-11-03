@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="robots" content="noindex,nofollow" />
+<meta name="referrer" content="no-referrer" />
+<title>가입 신청 처리</title>
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<style>
+  :root{--bg:#faf9f7;--panel:#fff;--border:#e7e3dd;--ink:#1f1c18;--muted:#756e63;--accent:#b45309;--accent-soft:#fef3e2}
+  @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#17150f;--panel:#1f1c15;--border:#35301f;--ink:#f1ede3;--muted:#a89f8c;--accent:#f0b25c;--accent-soft:#2b230f}}
+  :root[data-theme="dark"]{--bg:#17150f;--panel:#1f1c15;--border:#35301f;--ink:#f1ede3;--muted:#a89f8c;--accent:#f0b25c;--accent-soft:#2b230f}
+  body{background:var(--bg);color:var(--ink);font-family:-apple-system,"Apple SD Gothic Neo","Malgun Gothic","Segoe UI",sans-serif}
+  [hidden]{display:none!important}
+  .bg-white{background:var(--panel)!important}
+  .sj-field select option{color:#1f1c18}
+</style>
+<script>tailwind.config={darkMode:'media'}</script>
+</head>
+<body>
+<main class="mx-auto max-w-6xl px-4 py-6">
+    <section data-tab="signupjobs">
+      <style>
+        .sj-badge{display:inline-block;border-radius:999px;padding:1px 9px;font-size:12px;font-weight:600;white-space:nowrap}
+        .sj-b-none{background:var(--accent-soft);color:var(--muted)}
+        .sj-b-wait{background:#eef2ff;color:#3730a3}
+        .sj-b-run{background:#fff7ed;color:#9a3412}
+        .sj-b-auth{background:#fef3c7;color:#92400e}
+        .sj-b-submit{background:#dcfce7;color:#166534}
+        .sj-b-bad{background:#fee2e2;color:#991b1b}
+        .sj-b-done{background:#e5e7eb;color:#374151}
+        .sj-row{cursor:pointer}
+        .sj-row[aria-selected="true"]{outline:2px solid var(--accent);outline-offset:-2px}
+        .sj-field label{display:block;font-size:12px;color:var(--muted);margin-bottom:3px}
+        .sj-field input,.sj-field select,.sj-field textarea{width:100%;border:1px solid var(--border);border-radius:8px;padding:7px 9px;font-size:14px;background:transparent;color:inherit}
+      </style>
+      <div class="space-y-5">
+        <div class="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h2 class="text-xl font-semibold">가입 신청 처리</h2>
+            <p class="text-sm text-neutral-500">가입정보 폼으로 들어온 고객입니다. 고객을 고르고 신청서·기기를 지정한 뒤 "가입신청서 작성하기"를 누르면 내 PC의 aside가 신청서를 채웁니다. 이 페이지는 키가 있어야 보입니다.</p>
+          </div>
+          <div class="flex items-center gap-2 text-xs"><span id="sj-runner" class="sj-badge sj-b-none">PC 실행 프로그램 확인 중…</span><button type="button" id="sj-refresh" class="rounded-lg border px-3 py-1.5" style="border-color:var(--border)">새로고침</button></div>
+        </div>
+
+        <div id="sj-keybox" class="rounded-xl border p-4 text-sm space-y-2" style="border-color:var(--accent);background:var(--accent-soft)" hidden>
+          <p class="font-semibold">처음 한 번만: 대시보드 키 입력</p>
+          <p style="color:var(--muted)">가입정보 Apps Script의 스크립트 속성 <code>ADMIN_KEY</code> 값입니다. 이 브라우저에만 저장됩니다. 이 키로는 고객 이름·상태만 보이고 주민번호 등은 보이지 않습니다.</p>
+          <div class="flex gap-2"><input id="sj-key" type="password" class="flex-1 rounded-lg border px-3 py-1.5 bg-white dark:bg-transparent" style="border-color:var(--border)" placeholder="ADMIN_KEY" autocomplete="off" /><button type="button" id="sj-key-save" class="rounded-lg px-3 py-1.5 font-medium" style="background:var(--accent);color:#fff">저장</button></div>
+        </div>
+
+        <p id="sj-status" class="text-sm" style="color:var(--muted)" aria-live="polite"></p>
+
+        <div class="grid gap-5 lg:grid-cols-5">
+          <div class="lg:col-span-3 overflow-x-auto rounded-xl border border-neutral-200 dark:border-neutral-800">
+            <table class="w-full min-w-[520px] text-sm">
+              <thead><tr class="border-b border-neutral-200 bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-900 text-left text-neutral-500">
+                <th class="px-3 py-2 font-medium">접수</th><th class="px-3 py-2 font-medium">고객</th><th class="px-3 py-2 font-medium">현재 통신사</th><th class="px-3 py-2 font-medium">작업</th>
+              </tr></thead>
+              <tbody id="sj-tbody"><tr><td colspan="4" class="px-3 py-6 text-center" style="color:var(--muted)">불러오는 중…</td></tr></tbody>
+            </table>
+          </div>
+
+          <div class="lg:col-span-2 rounded-xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-950">
+            <div id="sj-empty" class="text-sm" style="color:var(--muted)">왼쪽 목록에서 고객을 고르세요.</div>
+            <form id="sj-form" class="space-y-3" hidden>
+              <div class="flex items-start justify-between gap-2">
+                <div><p class="text-lg font-semibold" id="sj-name"></p><p class="text-xs" id="sj-meta" style="color:var(--muted)"></p></div>
+                <span id="sj-jobbadge" class="sj-badge sj-b-none"></span>
+              </div>
+              <div id="sj-msg" class="rounded-lg px-3 py-2 text-sm" style="background:var(--accent-soft)" hidden></div>
+              <div id="sj-actions" class="flex flex-wrap gap-2"></div>
+
+              <div class="sj-field"><label for="sj-formsel">신청서 (대리점 코드 · 유형)</label><select id="sj-formsel" required></select></div>
+              <div class="grid grid-cols-2 gap-2">
+                <div class="sj-field"><label for="sj-open">개통 유형</label><select id="sj-open" required><option value="">선택</option><option>번호이동</option><option>기기변경</option><option>신규가입</option><option>유심단독</option></select></div>
+                <div class="sj-field"><label for="sj-cap">용량</label><select id="sj-cap"><option value="">선택 안 함</option><option>128GB</option><option>256GB</option><option>512GB</option><option>1TB</option></select></div>
+              </div>
+              <div class="sj-field"><label for="sj-device">기기</label><input id="sj-device" list="sj-devices" placeholder="예: 갤럭시 S26 울트라" required /><datalist id="sj-devices"></datalist></div>
+              <div class="grid grid-cols-2 gap-2">
+                <div class="sj-field"><label for="sj-color">색상</label><input id="sj-color" placeholder="예: 블랙" /></div>
+                <div class="sj-field"><label for="sj-plan">요금제</label><input id="sj-plan" placeholder="예: 5GX 프라임" /></div>
+              </div>
+              <div class="sj-field"><label for="sj-memo">메모 (에이전트에게 전할 말)</label><textarea id="sj-memo" rows="2" placeholder="예: 부가서비스 없음, 할인은 선택약정 24개월"></textarea></div>
+              <button type="submit" id="sj-go" class="w-full rounded-lg px-4 py-2.5 font-semibold" style="background:var(--accent);color:#fff">가입신청서 작성하기</button>
+              <p class="text-xs" style="color:var(--muted)">본인인증 화면과 최종 제출 직전에서 자동으로 멈춥니다. 제출 버튼은 직접 누르세요.</p>
+            </form>
+          </div>
+        </div>
+
+        <details class="rounded-xl border p-4 text-sm" style="border-color:var(--border)">
+          <summary class="cursor-pointer font-semibold">작업 상태 뜻</summary>
+          <ul class="mt-2 space-y-1" style="color:var(--muted)">
+            <li><span class="sj-badge sj-b-wait">대기</span> PC 실행 프로그램이 가져가기를 기다리는 중 (15초 안에 시작)</li>
+            <li><span class="sj-badge sj-b-run">작성중</span> aside가 신청서를 채우는 중 — aside 브라우저 화면에서 볼 수 있어요</li>
+            <li><span class="sj-badge sj-b-auth">인증대기</span> 본인인증 화면에서 멈춤 → aside 브라우저에서 인증을 마친 뒤 "인증 완료 · 계속 작성"</li>
+            <li><span class="sj-badge sj-b-submit">제출대기</span> 제출 직전에서 멈춤 → 내용을 확인하고 직접 제출한 뒤 "제출 완료"</li>
+            <li><span class="sj-badge sj-b-bad">확인필요/실패</span> 지정한 기기·요금제가 없거나 막힘 → 메시지를 보고 고친 뒤 다시 작성</li>
+          </ul>
+        </details>
+      </div>
+    </section>
+</main>
+<script>
+(function () {
+  const GAS = 'https://script.google.com/macros/s/AKfycbwHG_FhJYeMBDyEp2tOe2cshgWXFMesdlrSqw2DQBN3vlYy1XeVmmX1A7scqntAYcOV/exec';
+  const $ = (id) => document.getElementById(id);
+  const section = document.querySelector('section[data-tab="signupjobs"]');
+  if (!section) return;
+
+  // 신청서 목록 — "개통 URL·양식" 탭의 원본 데이터에서 운영 중인 통신사 온라인 신청서만
+  const FORMS = [{"value": "SK-A(온라인O,오프라인X) · 무선(MNP/기변)", "url": "https://tgateplus.sktelecom.com/main/main.do?p=70cd16d0475d810d2f7a32b869bc067c62966cd35bac41cf613e0771d463f4e2", "label": "무선(MNP/기변)"}, {"value": "SK-A(온라인O,오프라인X) · 유심단독", "url": "https://tgateplus.sktelecom.com/main/main.do?p=5fae3da9a51856cc60b6923e8ffb42d7f5c1da3d63efe82b9b162c2814013373", "label": "유심단독"}, {"value": "SKA-B · 번호이동(MNP)", "url": "https://tgateplus.sktelecom.com/main/main.do?p=d92776a27db429bbae2be88634afdd792cc8c0eb30f4474ff2c1b8f25137d757", "label": "번호이동(MNP)"}, {"value": "SKA-B · 기변", "url": "https://tgateplus.sktelecom.com/main/main.do?p=c8273881db1e946acc4b0346c14a58d6647dc522f5a3b7e6778bef5b76563330", "label": "기변"}, {"value": "SKA-B · 신규", "url": "https://tgateplus.sktelecom.com/main/main.do?p=3a58c83a79dc665287e922e1b55c4229d6639a3370296f4a519f49f31ff7d55e", "label": "신규"}, {"value": "SKC-B · 번호이동(MNP)", "url": "https://tgateplus.sktelecom.com/main/main.do?p=18197944b2d983aeed73005cdf0f8b20f0633f2ef64a40cf0435d2e1a52797d4", "label": "번호이동(MNP)"}, {"value": "SKC-B · 기변", "url": "https://tgateplus.sktelecom.com/main/main.do?p=813408361994861df4455299b5245cf20b9d5e924175a95c60ac8355d0f210b5", "label": "기변"}, {"value": "SKE-B · 번호이동(MNP)", "url": "https://tgateplus.sktelecom.com/main/main.do?p=04d9e9475a2907166b5a6d5647c61fa7fe63d49499fd806e8c4a7ec81aa4ff60", "label": "번호이동(MNP)"}, {"value": "SKE-B · 기변", "url": "https://tgateplus.sktelecom.com/main/main.do?p=3839824f688a3f0546306f88f0c77839d3621339c6a11149bf87e789e32513cd", "label": "기변"}, {"value": "SKE-B · 신규", "url": "https://tgateplus.sktelecom.com/main/main.do?p=cfe85160bb7c76751c9a8564981dd55bb84351539350f1c68a2a5b5883315652", "label": "신규"}, {"value": "SKT-C · 번호이동", "url": "https://tgateplus.sktelecom.com/main/main.do?p=f0f9363bc5eabcd97ca3e311ba420c5d37467363e062cb58a3f9dd22d53ffc23", "label": "번호이동"}, {"value": "SKT-C · 기기변경", "url": "https://tgateplus.sktelecom.com/main/main.do?p=ea86c0aba3b5655da454998a0eda90df5af8da758ee119377dc1c7a6a6cf5b77", "label": "기기변경"}, {"value": "LG-A2 · 번호이동(MNP)", "url": "https://onsalemobile.uplus.co.kr/open-market?formId=3118112&agentId=316842&openmktCd=20080", "label": "번호이동(MNP)"}, {"value": "LG-A2 · 기변(재가입)", "url": "https://onsalemobile.uplus.co.kr/open-market?formId=3118120&agentId=316842&openmktCd=20080", "label": "기변(재가입)"}, {"value": "LG-A2 · 워치류 신규", "url": "https://onsalemobile.uplus.co.kr/open-market?formId=3118127&agentId=316842&openmktCd=20080", "label": "워치류 신규"}, {"value": "LG-A2 · 키즈폰 신규", "url": "https://onsalemobile.uplus.co.kr/open-market?formId=3118124&agentId=316842&openmktCd=20080", "label": "키즈폰 신규"}, {"value": "LG-A3 · 번호이동(MNP)", "url": "https://onsalemobile.uplus.co.kr/open-market/?formId=3107176&agentId=315080&openmktCd=20067", "label": "번호이동(MNP)"}, {"value": "LG-A3 · 기변(재가입)", "url": "https://onsalemobile.uplus.co.kr/open-market/?formId=3107185&agentId=315080&openmktCd=20067", "label": "기변(재가입)"}, {"value": "LG-A3 · 키즈폰 신규", "url": "https://onsalemobile.uplus.co.kr/open-market?formId=1533161&agentId=315080&openmktCd=7809", "label": "키즈폰 신규"}, {"value": "LG-A3 · 워치류 신규", "url": "https://onsalemobile.uplus.co.kr/open-market?formId=1631446&agentId=315080&openmktCd=7809", "label": "워치류 신규"}, {"value": "LG-A3 · 태블릿 신규", "url": "https://onsalemobile.uplus.co.kr/open-market/?formId=3100125&agentId=315080&openmktCd=7809", "label": "태블릿 신규"}, {"value": "LGC-B · 번호이동", "url": "https://onsalemobile.uplus.co.kr/open-market?formId=2332092&agentId=315080&openmktCd=18911", "label": "번호이동"}, {"value": "LGC-B · 기기변경", "url": "https://onsalemobile.uplus.co.kr/open-market?formId=2332098&agentId=315080&openmktCd=18911", "label": "기기변경"}, {"value": "KTA (2) · 유심단독", "url": "https://online.kt.com/itg/online/index.do?prdcId=EFCB5006-77E5-4801-9D84-042077A7205A", "label": "유심단독"}, {"value": "유심 후불 · 신규가입/번호이동", "url": "https://online.kt.com/itg/online/index.do?prdcId=44575A76-BD71-4BF4-BDA5-6E0AA54448F7", "label": "신규가입/번호이동"}];
+
+  const DEVICES = ['갤럭시 S26', '갤럭시 S26+', '갤럭시 S26 울트라', '갤럭시 S26 FE', '갤럭시 Z플립8', '갤럭시 Z폴드8', '갤럭시 Z폴드8 울트라',
+    '갤럭시 S25', '갤럭시 S25 울트라', '갤럭시 S25 FE', '갤럭시 Z플립7', '갤럭시 Z폴드7', '갤럭시 A17', '갤럭시 버디5',
+    '아이폰 17', '아이폰 17 프로', '아이폰 17 프로 맥스', '아이폰 17 에어', '아이폰 17e', '아이폰 16', '아이폰 16 프로', '아이폰 16e', '유심만 (기기 없음)'];
+  $('sj-devices').innerHTML = DEVICES.map((d) => '<option value="' + d + '"></option>').join('');
+  $('sj-formsel').innerHTML = '<option value="">선택</option>' + FORMS.map((f, i) => '<option value="' + i + '">' + esc(f.value) + '</option>').join('');
+
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+  const getKey = () => { try { return localStorage.getItem('signupAdminKey') || ''; } catch (e) { return ''; } };
+
+  let rows = [], selected = null, timer = null, busy = false;
+
+  function badge(st) {
+    const map = { '대기': 'wait', '작성중': 'run', '계속': 'run', '인증대기': 'auth', '제출대기': 'submit', '확인필요': 'bad', '실패': 'bad', '완료': 'done', '취소': 'done' };
+    return '<span class="sj-badge sj-b-' + (map[st] || 'none') + '">' + esc(st || '미작성') + '</span>';
+  }
+  const fmt = (iso) => { const d = new Date(iso); return isNaN(d) ? esc(iso) : (d.getMonth() + 1) + '/' + d.getDate() + ' ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); };
+
+  async function load(quiet) {
+    const key = getKey();
+    $('sj-keybox').hidden = !!key;
+    if (!key) { $('sj-tbody').innerHTML = '<tr><td colspan="4" class="px-3 py-6 text-center" style="color:var(--muted)">위에 대시보드 키를 넣어 주세요.</td></tr>'; return; }
+    if (!quiet) $('sj-status').textContent = '불러오는 중…';
+    try {
+      const res = await fetch(GAS + '?action=list&key=' + encodeURIComponent(key));
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error === 'Error: unauthorized' ? '키가 맞지 않습니다' : data.error);
+      rows = data.rows || [];
+      renderRunner(data.runnerSeenAt);
+      renderList();
+      if (selected) { const r = rows.find((x) => x.row === selected.row); if (r) { selected = r; renderDetail(false); } }
+      $('sj-status').textContent = '고객 ' + rows.length + '명 · ' + new Date().toLocaleTimeString('ko-KR') + ' 기준';
+    } catch (e) {
+      $('sj-status').textContent = '불러오지 못했어요: ' + e.message;
+      if (/키가 맞지/.test(e.message)) { try { localStorage.removeItem('signupAdminKey'); } catch (er) {} $('sj-keybox').hidden = false; }
+    }
+  }
+
+  function renderRunner(seen) {
+    const el = $('sj-runner');
+    const ago = seen ? (Date.now() - new Date(seen).getTime()) / 1000 : Infinity;
+    if (ago < 60) { el.className = 'sj-badge sj-b-submit'; el.textContent = 'PC 실행 프로그램 켜짐'; }
+    else { el.className = 'sj-badge sj-b-bad'; el.textContent = seen ? 'PC 실행 프로그램 꺼짐 (마지막 ' + fmt(seen) + ')' : 'PC 실행 프로그램 꺼짐'; el.title = 'tools/signup-runner/start-runner.bat 을 실행하세요'; }
+  }
+
+  function renderList() {
+    const tb = $('sj-tbody');
+    if (!rows.length) { tb.innerHTML = '<tr><td colspan="4" class="px-3 py-6 text-center" style="color:var(--muted)">아직 들어온 가입 신청이 없어요.</td></tr>'; return; }
+    tb.innerHTML = rows.map((r) => '<tr class="sj-row border-b border-neutral-100 dark:border-neutral-900" data-row="' + r.row + '" aria-selected="' + (selected && selected.row === r.row) + '">' +
+      '<td class="px-3 py-2 whitespace-nowrap" style="color:var(--muted)">' + fmt(r.submittedAt) + '</td>' +
+      '<td class="px-3 py-2"><div class="font-semibold">' + esc(r.name) + '</div><div class="text-xs" style="color:var(--muted)">' + esc(r.phone) + (r.status && r.status !== '접수' ? ' · ' + esc(r.status) : '') + '</div></td>' +
+      '<td class="px-3 py-2">' + esc(r.carrier) + '</td>' +
+      '<td class="px-3 py-2">' + badge(r.job && r.job.status) + (r.job && r.job.device ? '<div class="text-xs mt-0.5" style="color:var(--muted)">' + esc(r.job.device) + ' ' + esc(r.job.capacity) + '</div>' : '') + '</td></tr>').join('');
+  }
+
+  $('sj-tbody').addEventListener('click', (e) => {
+    const tr = e.target.closest('.sj-row'); if (!tr) return;
+    selected = rows.find((r) => r.row === Number(tr.dataset.row));
+    renderList(); renderDetail(true);
+  });
+
+  function renderDetail(fill) {
+    const r = selected;
+    $('sj-empty').hidden = !!r; $('sj-form').hidden = !r;
+    if (!r) return;
+    const j = r.job || {};
+    $('sj-name').textContent = r.name;
+    $('sj-meta').textContent = r.phone + ' · 현재 ' + r.carrier + ' · 납부 ' + (r.payMethod || '-') + ' · ' + fmt(r.submittedAt) + ' 접수';
+    $('sj-jobbadge').outerHTML = badge(j.status).replace('<span ', '<span id="sj-jobbadge" ');
+    const msg = $('sj-msg'); msg.hidden = !j.message; msg.textContent = j.message ? j.message + (j.updatedAt ? ' (' + fmt(j.updatedAt) + ')' : '') : '';
+    const acts = [];
+    if (j.status === '인증대기') acts.push(['resume', '인증 완료 · 계속 작성', 'accent']);
+    if (j.status === '제출대기' || j.status === '인증대기' || j.status === '확인필요') acts.push(['done', '제출 완료', 'ink']);
+    if (['대기', '인증대기', '제출대기', '확인필요', '실패', '작성중'].includes(j.status)) acts.push(['cancel', '작업 취소', 'line']);
+    $('sj-actions').innerHTML = acts.map(([a, t, s]) => '<button type="button" data-act="' + a + '" class="rounded-lg px-3 py-1.5 text-sm font-medium" style="' +
+      (s === 'accent' ? 'background:var(--accent);color:#fff' : s === 'ink' ? 'background:var(--ink);color:var(--bg)' : 'border:1px solid var(--border)') + '">' + t + '</button>').join('');
+    const running = j.status === '대기' || j.status === '작성중' || j.status === '계속';
+    $('sj-go').disabled = running; $('sj-go').style.opacity = running ? .5 : 1;
+    $('sj-go').textContent = running ? '작성 진행 중…' : (j.status ? '다시 작성하기 (처음부터)' : '가입신청서 작성하기');
+    if (fill) {
+      const fi = FORMS.findIndex((f) => f.url === j.formUrl);
+      $('sj-formsel').value = fi >= 0 ? String(fi) : '';
+      $('sj-open').value = j.openType || ''; $('sj-device').value = j.device || ''; $('sj-cap').value = j.capacity || '';
+      $('sj-color').value = j.color || ''; $('sj-plan').value = j.plan || ''; $('sj-memo').value = j.memo || '';
+    }
+  }
+
+  // 신청서를 고르면 링크 이름으로 개통 유형을 미리 채운다
+  $('sj-formsel').addEventListener('change', () => {
+    const f = FORMS[Number($('sj-formsel').value)]; if (!f || $('sj-open').value) return;
+    if (/MNP|번호이동/.test(f.label)) $('sj-open').value = '번호이동';
+    else if (/기변|기기변경/.test(f.label)) $('sj-open').value = '기기변경';
+    else if (/신규/.test(f.label)) $('sj-open').value = '신규가입';
+    else if (/유심/.test(f.label)) $('sj-open').value = '유심단독';
+  });
+
+  async function post(body) {
+    const res = await fetch(GAS, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(Object.assign({ key: getKey() }, body)) });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error);
+    return data;
+  }
+
+  $('sj-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (busy || !selected) return;
+    const f = FORMS[Number($('sj-formsel').value)];
+    if (!f) { $('sj-status').textContent = '신청서를 골라 주세요.'; return; }
+    busy = true; $('sj-go').disabled = true; $('sj-status').textContent = '작업을 등록하는 중…';
+    try {
+      await post({ action: 'job', row: selected.row, form: f.value, formUrl: f.url, openType: $('sj-open').value,
+        device: $('sj-device').value.trim(), capacity: $('sj-cap').value, color: $('sj-color').value.trim(),
+        plan: $('sj-plan').value.trim(), memo: $('sj-memo').value.trim() });
+      await load(true);
+      $('sj-status').textContent = '등록했어요. PC 실행 프로그램이 15초 안에 시작합니다.';
+    } catch (er) { $('sj-status').textContent = '등록 실패: ' + er.message; }
+    busy = false; renderDetail(false);
+  });
+
+  $('sj-actions').addEventListener('click', async (e) => {
+    const b = e.target.closest('[data-act]'); if (!b || busy || !selected) return;
+    busy = true; b.disabled = true;
+    try { await post({ action: b.dataset.act, row: selected.row }); await load(true); }
+    catch (er) { $('sj-status').textContent = '처리 실패: ' + er.message; }
+    busy = false;
+  });
+
+  $('sj-key-save').addEventListener('click', () => { const v = $('sj-key').value.trim(); if (!v) return; try { localStorage.setItem('signupAdminKey', v); } catch (e) {} $('sj-key').value = ''; load(); });
+  $('sj-refresh').addEventListener('click', () => load());
+
+  // 탭이 보일 때만 20초마다 새로고침
+  function tick() { if (!section.hidden && document.visibilityState === 'visible') load(true); }
+  new MutationObserver(() => { if (!section.hidden) { load(); if (!timer) timer = setInterval(tick, 20000); } }).observe(section, { attributes: true, attributeFilter: ['hidden'] });
+  if (!section.hidden) { load(); timer = setInterval(tick, 20000); }
+})();
+</script>
+
+</body>
+</html>
